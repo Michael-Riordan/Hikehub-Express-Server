@@ -21,6 +21,24 @@ app.get('/api/activities', async (req, res) => {
     }
 });
 
+app.get('/api/geolocation', async (req, res) => {
+    const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+    const coordinates = req.query.coordinates;
+    const coordinatesObject = JSON.parse(decodeURIComponent(coordinates));
+    const latitude = coordinatesObject.latitude;
+    const longitude = coordinatesObject.longitude;
+
+    try {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`);
+        const jsonResponse = await response.json();
+
+        res.send(jsonResponse);
+    } catch (error) {
+        console.error('Error fetching location', error);
+        res.status(500).json({ error: 'Internal server error'});
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 });
