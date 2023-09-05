@@ -21,6 +21,24 @@ app.get('/api/activities', async (req, res) => {
     }
 });
 
+app.get('/api/recAreas', async (req, res) => {
+    const API_KEY = process.env.RECDOTGOV_API_KEY;
+    const coordinates = req.query.coordinates;
+    const coordinatesObject = JSON.parse(decodeURIComponent(coordinates));
+    const latitude = coordinatesObject.latitude;
+    const longitude = coordinatesObject.longitude;
+
+    try {
+        const response = await fetch(`https://ridb.recreation.gov/api/v1/recareas?limit=50&offset=0&latitude=${latitude}&longitude=${longitude}&apikey=${API_KEY}`);
+        const jsonResponse = await response.json();
+
+        res.send(jsonResponse);
+    } catch (error) {
+        console.error('Error fetching recArea data', error);
+        res.status(500).json({ error: 'Internal server error.'})
+    }
+})
+
 app.get('/api/geolocation', async (req, res) => {
     const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
     const coordinates = req.query.coordinates;
