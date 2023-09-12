@@ -83,6 +83,20 @@ app.get('/api/NationalParks', async (req, res) => {
     }
 })
 
+app.get('/api/NationalParkGeoJson', async (req, res) => {
+    const API_KEY = process.env.DATADOTGOV_API_KEY;
+    const parkCode = req.query.parkCode;
+
+    try {
+        const response = await fetch(`https://developer.nps.gov/api/v1/mapdata/parkboundaries/${parkCode}?api_key=${API_KEY}`);
+        const jsonResponse = await response.json();
+        res.send(jsonResponse);
+    } catch (error) {
+        console.error('Error fetching National Park GeoJSON');
+        res.status(500).json({ error: 'Internal server error.'});
+    }
+})
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
