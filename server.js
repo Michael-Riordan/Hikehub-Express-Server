@@ -19,10 +19,25 @@ app.get('/api/geolocation', async (req, res) => {
 
         res.send(jsonResponse);
     } catch (error) {
-        console.error('Error fetching location', error);
+        console.error('Error fetching location via coordinates', error);
         res.status(500).json({ error: 'Internal server error'});
     }
 });
+
+app.get('/api/geocoding', async (req, res) => {
+    const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+    const address = req.query.address;
+
+    try {
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${API_KEY}`);
+        const jsonResponse = await response.json();
+
+        res.send(jsonResponse);
+    } catch (error) {
+        console.error('Error fetching location via address', error);
+        res.status(500).json({ error: 'Internal server error'});
+    }
+})
 
 app.get('/api/activities', async (req, res) => {
     const API_KEY = process.env.RECDOTGOV_API_KEY;
