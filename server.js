@@ -20,7 +20,7 @@ app.get('/api/geolocation', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching location via coordinates', error);
-        res.status(500).json({ error: 'Internal server error'});
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -35,7 +35,7 @@ app.get('/api/geocoding', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching location via address', error);
-        res.status(500).json({ error: 'Internal server error'});
+        res.status(500).json({ error: 'Internal server error' });
     }
 })
 
@@ -50,7 +50,7 @@ app.get('/api/activities', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching activity data', error);
-        res.status(500).json({ error: 'Internal server error'});
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -65,7 +65,7 @@ app.get('/api/recAreas', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching recArea data', error);
-        res.status(500).json({ error: 'Internal server error.'});
+        res.status(500).json({ error: 'Internal server error.' });
     }
 })
 
@@ -80,7 +80,7 @@ app.get('/api/recAreaImg', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching Rec Area Images', error);
-        res.status(500).json( {error: 'Internal server error.'});
+        res.status(500).json({ error: 'Internal server error.' });
     }
 })
 
@@ -94,7 +94,21 @@ app.get('/api/NationalParks', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching National Parks data', error);
-        res.status(500).json({ error: 'Internal server error.'});
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+})
+
+app.get('/api/AllNationalParks', async (req, res) => {
+    const API_KEY = process.env.DATADOTGOV_API_KEY;
+    const startCount = req.query.startCount;
+    
+    try {
+        const response = await fetch(`https://developer.nps.gov/api/v1/parks?start=${startCount}&api_key=${API_KEY}`);
+        const jsonResponse = await response.json();
+        res.send(jsonResponse);
+    } catch (error) {
+        console.error('Error fetching All National Parks', error);
+        res.status(500).json({ error: 'Internal server error.' });
     }
 })
 
@@ -108,7 +122,7 @@ app.get('/api/NationalParkGeoJson', async (req, res) => {
         res.send(jsonResponse);
     } catch (error) {
         console.error('Error fetching National Park GeoJSON');
-        res.status(500).json({ error: 'Internal server error.'});
+        res.status(500).json({ error: 'Internal server error.' });
     }
 })
 
