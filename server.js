@@ -40,11 +40,10 @@ app.get('/api/geocoding', async (req, res) => {
 })
 
 app.get('/api/activities', async (req, res) => {
-    const API_KEY = process.env.RECDOTGOV_API_KEY;
-    const offset = req.query.offset || 0;
+    const API_KEY = process.env.DATADOTGOV_API_KEY;
 
     try {
-        const response = await fetch(`https://ridb.recreation.gov/api/v1/activities?limit=50&offset=${offset}&apikey=${API_KEY}`);
+        const response = await fetch(`https://developer.nps.gov/api/v1/activities?&api_key=${API_KEY}`);
         const jsonResponse = await response.json();
 
         res.send(jsonResponse);
