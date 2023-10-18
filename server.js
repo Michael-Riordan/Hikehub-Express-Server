@@ -5,6 +5,7 @@ require('dotenv').config();
 const app = express();
 const port = 3000;
 app.use(cors());
+app.use(express.json());
 
 app.get('/api/geolocation', async (req, res) => {
     const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
@@ -37,7 +38,7 @@ app.get('/api/geocoding', async (req, res) => {
         console.error('Error fetching location via address', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-})
+});
 
 app.get('/api/activities', async (req, res) => {
     const API_KEY = process.env.DATADOTGOV_API_KEY;
@@ -53,36 +54,6 @@ app.get('/api/activities', async (req, res) => {
     }
 });
 
-app.get('/api/recAreas', async (req, res) => {
-    const API_KEY = process.env.RECDOTGOV_API_KEY;
-    const stateCode = req.query.stateCode
-
-    try {
-        const response = await fetch(`https://ridb.recreation.gov/api/v1/recareas?limit=50&offset=0&state=${stateCode}&apikey=${API_KEY}`);
-        const jsonResponse = await response.json();
-
-        res.send(jsonResponse);
-    } catch (error) {
-        console.error('Error fetching recArea data', error);
-        res.status(500).json({ error: 'Internal server error.' });
-    }
-})
-
-app.get('/api/recAreaImg', async (req, res) => {
-    const API_KEY = process.env.RECDOTGOV_API_KEY;
-    const idQuery = req.query.id;
-
-    try {
-        const response = await fetch (`https://ridb.recreation.gov/api/v1/recareas/${idQuery}/media?limit=50&offset=0&apikey=${API_KEY}`)
-        const jsonResponse = await response.json();
-
-        res.send(jsonResponse);
-    } catch (error) {
-        console.error('Error fetching Rec Area Images', error);
-        res.status(500).json({ error: 'Internal server error.' });
-    }
-})
-
 app.get('/api/NationalParks', async (req, res) => {
     const API_KEY = process.env.DATADOTGOV_API_KEY;
     const stateCode = req.query.stateCode;
@@ -95,7 +66,7 @@ app.get('/api/NationalParks', async (req, res) => {
         console.error('Error fetching National Parks data', error);
         res.status(500).json({ error: 'Internal server error.' });
     }
-})
+});
 
 app.get('/api/AllNationalParks', async (req, res) => {
     const API_KEY = process.env.DATADOTGOV_API_KEY;
@@ -108,6 +79,21 @@ app.get('/api/AllNationalParks', async (req, res) => {
     } catch (error) {
         console.error('Error fetching All National Parks', error);
         res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+
+app.get('/api/visitorCenters', async (req, res) => {
+    const API_KEY = process.env.DATADOTGOV_API_KEY;
+    const parkCode = req.query.parkCode;
+    const parkCodeQuery = `parkCode=${parkCode}`
+
+    try {
+        const response = await fetch(`https://developer.nps.gov/api/v1/visitorcenters?${parkCodeQuery}&api_key=${API_KEY}`);
+        const jsonResponse = await response.json();
+        res.send(jsonResponse);
+    } catch (error) {
+        console.error('Error fetching visitor centers', error);
+        res.status(500).json({error: 'Internal server error.'});
     }
 })
 
@@ -123,7 +109,7 @@ app.get('/api/NationalParkGeoJson', async (req, res) => {
         console.error('Error fetching National Park GeoJSON');
         res.status(500).json({ error: 'Internal server error.' });
     }
-})
+});
 
 app.get('/api/NatParkThingsToDo', async (req, res) => {
     const API_KEY = process.env.DATADOTGOV_API_KEY;
@@ -137,8 +123,7 @@ app.get('/api/NatParkThingsToDo', async (req, res) => {
         console.error(`Error fetching Things to Do in ${parkCode}`);
         res.status(500).json({ error: 'Internal server error.' });
     }
-})
-
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
