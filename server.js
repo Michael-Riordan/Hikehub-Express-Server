@@ -4,8 +4,12 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-app.use(cors());
 app.use(express.json());
+
+app.use(cors({
+    origin: 'https://master--lustrous-bubblegum-27de96.netlify.app/',
+    optionsSuccessStatus: 200,
+}));
 
 app.get('/api/geolocation', async (req, res) => {
     const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
