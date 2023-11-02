@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use(cors({
-    origin: ['https://master--lustrous-bubblegum-27de96.netlify.app', 'http://192.168.0.59:5173', 'http://localhost:5173', 'https://lustrous-bubblegum-27de96.netlify.app', 'https://wanderamerica.netlify.app'],
+    origin: ['https://master--lustrous-bubblegum-27de96.netlify.app', 'http://192.168.0.59:5173', 'http://localhost:5173', 'https://lustrous-bubblegum-27de96.netlify.app', 'https://wanderamerica.netlify.app', 'https://master--wanderamerica.netlify.app'],
     optionsSuccessStatus: 200,
 }));
 
