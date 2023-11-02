@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://master--lustrous-bubblegum-27de96.netlify.app',
+    origin: ['https://master--lustrous-bubblegum-27de96.netlify.app', 'http://192.168.0.59:5173'],
     optionsSuccessStatus: 200,
 }));
 
