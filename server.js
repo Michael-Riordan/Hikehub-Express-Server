@@ -17,16 +17,6 @@ app.use(cors({
     optionsSuccessStatus: 200,
 }));
 
-
-AWS.config.update({
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_KEY,
-    },
-    region: 'us-west-1'
-})
-
-
 app.get('/api/geolocation', async (req, res) => {
     const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
     const coordinates = req.query.coordinates;
