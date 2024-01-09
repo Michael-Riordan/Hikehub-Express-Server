@@ -1,15 +1,33 @@
 const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-
 const app = express();
+require('dotenv').config();
+const AWS = require('aws-sdk');
+const { getTemporaryCredentials } = require('./awsUtils');
 const port = process.env.PORT || 3000;
+const cors = require('cors');
 app.use(express.json());
+
+/*
+--imports for imageDownloader endpoint
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+*/ 
 
 app.use(cors({
     origin: ['https://master--lustrous-bubblegum-27de96.netlify.app', 'http://192.168.0.59:5173', 'http://localhost:5173', 'https://lustrous-bubblegum-27de96.netlify.app', 'https://wanderamerica.netlify.app', 'https://master--wanderamerica.netlify.app'],
     optionsSuccessStatus: 200,
 }));
+
+
+AWS.config.update({
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_KEY,
+    },
+    region: 'us-west-1'
+})
+
 
 app.get('/api/geolocation', async (req, res) => {
     const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
@@ -128,6 +146,67 @@ app.get('/api/NatParkThingsToDo', async (req, res) => {
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
+
+app.get('/api/parkImages', async (req, res) => {
+
+    const s3 = new AWS.S3();
+
+    const params = {
+        Bucket: 'wanderamerica',
+    };
+
+    s3.listObjectsV2(params, (err, data) => {
+        if (err) {
+            console.error('Error fetching S3 contents:', err);
+        } else {
+            console.log('S3 Contents:', data.Contents);
+            res.json(data.Contents);
+        }
+    });
+
+})
+
+/*
+//below code is used to download and store image files in an images folder (later uploaded to s3)
+const folderName = 'images';
+app.post('/api/imageDownloader', async (req, res) => {
+    const  { urls } = req.body;
+
+    if (!fs.existsSync(folderName)) {
+        fs.mkdirSync(folderName);
+    }
+
+    downloadWithConcurrency(10, urls);
+})
+
+const downloadImage = async (url, destination) => {
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const buffer = await response.arrayBuffer();
+        const filename = `${destination}/${url.substring(url.lastIndexOf('/') + 1)}`;
+        fs.writeFileSync(filename, Buffer.from(buffer));
+        console.log(`Downloaded ${url}`);
+    } catch (error) {
+        console.error(`Error downloading ${url}: ${error.message}`);
+    }
+};
+
+const downloadWithConcurrency = async (maxConcurrency = 10, urls) => {
+    const imageChunks = Array.from({length: Math.ceil(urls.length / maxConcurrency) }, (_, index) => 
+        urls.slice(index * maxConcurrency, (index + 1) * maxConcurrency)
+    );
+
+    for (const chunk of imageChunks) {
+        await Promise.all(chunk.map(url => downloadImage(url, 'images')))
+    }
+};
+*/
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
