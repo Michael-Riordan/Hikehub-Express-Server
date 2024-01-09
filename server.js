@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 require('dotenv').config();
-const AWS = require('aws-sdk');
 const port = process.env.PORT || 3000;
 const cors = require('cors');
 app.use(express.json());
